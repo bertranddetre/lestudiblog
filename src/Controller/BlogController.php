@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Article;
+use App\Entity\Category;
 use App\Repository\ArticleRepository;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
@@ -13,6 +14,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 
 
@@ -25,7 +27,7 @@ class BlogController extends AbstractController
       $articles=$repo->findAll();
 
       return $this->render('blog/index.html.twig', [
-          'controller_name' => 'BlogController',
+          'controller_name' => 'Les articles',
           'articles'=>$articles
       ]);
   }
@@ -45,6 +47,10 @@ class BlogController extends AbstractController
         $form=$this->createFormBuilder($article)
 
             ->add('title')
+            ->add('category', EntityType::class,[
+                'class'=>Category::class,
+                'choice_label'=>'title'
+            ])
             ->add('content')
             ->add('image')
 
