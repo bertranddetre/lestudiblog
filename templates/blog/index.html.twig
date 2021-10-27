@@ -10,7 +10,6 @@
 
         <article>
             <h2>{{ article.title }}</h2>
-            <div class="metadata">Ecrit le {{ article.createdAt | date('d/m/Y') }} dans la catégorie Politique</div>
             <div class="content">
                 <img src="{{ article.image }}" alt="news">
                 <p> {{ article.content | raw }}</p>

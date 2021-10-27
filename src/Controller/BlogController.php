@@ -4,9 +4,17 @@ namespace App\Controller;
 
 use App\Entity\Article;
 use App\Repository\ArticleRepository;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+
+
 
 class BlogController extends AbstractController
 {
@@ -28,10 +36,40 @@ class BlogController extends AbstractController
           'title'=>'Bienvenue sur mon blog!',
       ]);
   }
+
+    #[Route('/blog/new', name:'blog_create')]
+    public function create( Request $request, EntityManagerInterface $manager):Response
+    {
+        $article=new Article();
+
+        $form=$this->createFormBuilder($article)
+
+            ->add('title')
+            ->add('content')
+            ->add('image')
+
+            ->getForm();
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted()&& $form->isValid())
+
+            $manager->persist ($article);
+            $manager->flush();
+
+
+        return $this->render('blog/create.html.twig',[
+            'formArticle'=> $form->createView(),
+                'editMode'=> $article->getId() !==null
+            ]);
+
+    }
+
     #[Route('/blog/{id}', name:'blog_show')]
     public function show(Article $article)
     {
         return $this->render('blog/show.html.twig',[
         'article'=>$article ]);
     }
+
+
 }
